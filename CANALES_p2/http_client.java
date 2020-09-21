@@ -2,6 +2,7 @@
 /* A Java program for a http_client */
 import java.net.*; 
 import java.io.*; 
+import java.util.*;
   
 public class http_client 
 { 
@@ -25,6 +26,8 @@ public class http_client
 
 			String cookies = connection.getHeaderField("Set-Cookie");
 			connection = (HttpURLConnection) new URL(newUrl).openConnection();
+			myWriter.write("URL redirected to "+ newUrl);
+			myWriter.write("\nPrinting HTTP header info from "+ newUrl);
 		}
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -34,6 +37,7 @@ public class http_client
 		String inputLine;
 		StringBuffer html = new StringBuffer();
 		
+		/*Adds information to end of html string buffer until null*/
 		while((inputLine = in.readLine()) != null) {
 			html.append(inputLine);
 		}
@@ -41,28 +45,19 @@ public class http_client
 
 		String line = null;
 
-		myWriter.write("URL Content... \n" +html.toString());
-		myWriter.close();
+		/*Printing all the header information*/
+		Map<String, List<String>> map = connection.getHeaderFields();
+		for (Map.Entry<String, List<String>> entry : map.entrySet())
+		{
+			myWriter.write("\n"+ entry.getKey() +" : "+ entry.getValue());
+		}
+		
+		
+		/*Prints to the end of the file with the URL Content*/
+		
+		myWriter.write("\n\n\nURL Content... \n" +html.toString());
 		in.close();
 		
-
-
-		/*All of my objects setup for URL connection and for outputPrint*/
-		/*
-		URL url = new URL(address);
-		URLConnection connection = url.openConnection();
-		InputStream is = connection.getInputStream();
-		FileWriter myWriter = new FileWriter("http_client_output");
-
-		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-		String line = null;
-
-		while((line = br.readLine()) != null) {
-			myWriter.write(line);
-			}
-		myWriter.close();
-		*/
 	}
 
 
